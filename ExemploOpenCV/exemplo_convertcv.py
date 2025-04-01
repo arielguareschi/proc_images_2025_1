@@ -21,7 +21,7 @@ else:
     #escala de cinza
     imagem_cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
     cv2.imshow("Escala de Cinza", imagem_cinza)
-    cv2.imwrite("imagem_cinza.jpg", imagem_cinza)
+    cv2.imwrite("resultados/imagem_cinza.jpg", imagem_cinza)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
