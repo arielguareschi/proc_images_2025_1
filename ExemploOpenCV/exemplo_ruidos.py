@@ -1,5 +1,7 @@
 #exemplo_ruidos
 import cv2
+import numpy as np
+
 img = cv2.imread('cachorro_pequeno.jpg')
 cv2.imshow('Oliginal', img)
 #
@@ -26,22 +28,34 @@ cv2.imshow('Oliginal', img)
 # cv2.imshow('Edges', edges)
 
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#
+# _, thresh = cv2.threshold(gray, 127, 255,
+#                           cv2.THRESH_BINARY)
+# contours, _ = cv2.findContours(thresh, cv2.RETR_TREE,
+#                                cv2.CHAIN_APPROX_SIMPLE)
+# cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+# cv2.imshow('Contornos', img)
+#
+# adaptative = cv2.adaptiveThreshold(gray, 255,
+#                                    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+#                                    cv2.THRESH_BINARY,
+#                                    11, 2)
+# cv2.imshow('adaptative', adaptative)
+# contours, _ = cv2.findContours(adaptative, cv2.RETR_TREE,
+#                                cv2.CHAIN_APPROX_SIMPLE)
+# cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
+# cv2.imshow('Contours', img)
 
-_, thresh = cv2.threshold(gray, 127, 255,
-                          cv2.THRESH_BINARY)
-contours, _ = cv2.findContours(thresh, cv2.RETR_TREE,
-                               cv2.CHAIN_APPROX_SIMPLE)
-cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
-cv2.imshow('Contornos', img)
+#Segmentacao watershed
+_, thresh = cv2.threshold(gray, 0, 255,
+                          cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+dist_transform = cv2.distanceTransform(thresh, cv2.DIST_L2,
+                                       5)
+_, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(),
+                           255, 0)
 
-adaptative = cv2.adaptiveThreshold(gray, 255,
-                                   cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                   cv2.THRESH_BINARY,
-                                   11, 2)
-cv2.imshow('adaptative', adaptative)
-contours, _ = cv2.findContours(adaptative, cv2.RETR_TREE,
-                               cv2.CHAIN_APPROX_SIMPLE)
-cv2.drawContours(img, contours, -1, (0, 255, 0), 2)
-cv2.imshow('Contours', img)
+markers = cv2.watershed(img, sure_fg.astype(np.int32))
+img[markers == -1] = [0, 0, 255]
+cv2.imshow('Distanciamento', img)
 
 cv2.waitKey(0)
