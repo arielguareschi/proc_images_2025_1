@@ -1,8 +1,10 @@
 #exemplo_ruidos
+from contextlib import closing
+
 import cv2
 import numpy as np
 
-img = cv2.imread('cachorro_pequeno.jpg')
+img = cv2.imread('exemplo_ocr.jpg')
 cv2.imshow('Oliginal', img)
 #
 # blur = cv2.blur(img, (5,5))  # Janela de 5x5
@@ -57,5 +59,19 @@ _, sure_fg = cv2.threshold(dist_transform, 0.7*dist_transform.max(),
 markers = cv2.watershed(img, sure_fg.astype(np.int32))
 img[markers == -1] = [0, 0, 255]
 cv2.imshow('Distanciamento', img)
+
+
+kernel = np.ones((5, 5), np.uint8)
+erosion = cv2.erode(thresh, kernel, iterations=1)
+cv2.imshow('Erosion', erosion)
+
+dilation = cv2.dilate(thresh, kernel, iterations=1)
+cv2.imshow('Dilation', dilation)
+
+opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+cv2.imshow('Opening', opening)
+
+closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+cv2.imshow('Closing', closing)
 
 cv2.waitKey(0)
