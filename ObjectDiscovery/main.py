@@ -13,7 +13,7 @@ imagem = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 imagem_rgb = cv2.cvtColor(imagem, cv2.COLOR_BGR2RGB)
 
 # Carrega o modelo pré-treinado (nano = mais leve e rápido)
-model = YOLO('yolov8x.pt')
+model = YOLO('yolov8n.pt')
 
 # Detecta objetos
 results = model(imagem_rgb)
